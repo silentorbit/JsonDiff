@@ -1,88 +1,98 @@
 ﻿
-# JsonDiff
+# ⚡ SilentOrbit.JsonDiff
 
-Calculate difference between objects of the same type.
 
-The difference is presented in a generated `MyClass.Diff` class that can be serialized with `System.Text.Json`.
+Strong-typed object diffing for dotnet with a compact and readable JSON format.
 
-## JSON format
+JsonDiff generates a companion .Diff class for your models at compile-time.
+It allows you to track changes, reduce network payload, and sync state with System.Text.Json serialization.
 
-The goal is to have a compact and readable format.
+# 🚀 Quick Start
 
-The serialized format is similar to [JSON Merge Patch](https://datatracker.ietf.org/doc/html/rfc7386) but with some significant differences.
+## Mark your classes
 
-- JsonDiff is not working with generic JSON documents, its strongly typed to the classes marked up.
-- JsonDiff differentiates between full and partial object replace. This is seen in the JSON format where partial replacements are prefixed with "^".
+Add `partial` and [`[JsonDiffClass]`](https://github.com/silentorbit/JsonDiff/blob/master/JsonDiff/JsonDiff.Abstractions/Attributes/JsonDiffClassAttribute.cs) to the models you want to track.
 
-Example: A is completly replaced by the new values.
-
-```
-{
-  "A": { "B": 3, "C": 4 }
-}
-```
-
-Example: A is partially modified, C is replaced by 4 and B is not modified.
-
-```
-{
-  "^A": { "C": 4 }
-}
+```C#
+[JsonDiffClass]
+public partial class UserProfile {
+    public string Name { get; set; }
+    public int Level { get; set; }
+    ...
 ```
 
-Further on other symbol prefixes may be used for other operations not yet supported. For example list or substring manipulation.
+## Detect changes
+```C#
+var profile = new UserProfile();
+var diff = original.CreateReferenceDiff();
+
+// Modify
+profile.Name = "Alice";
+profile.Level = 42;
+
+// Calculate changes
+diff.TrimIsUnchanged(profile);
+
+var json = JsonSerializer.Serialize(diff);
+// {"Name":"Alice","Level":42}
+```
+
+## Apply Diff
+
+```
+UserProfile current = ...
+UserProfile.Diff diff = ...
+
+// Reconstruct the previous revision
+var previous = diff.ApplyTo(current);
+        
+```
+
+See other examples in [Demo](https://github.com/silentorbit/JsonDiff/blob/master/Demo/Demo.Shared/Program.cs)
+
+
+# 📦 JSON format
+
+JsonDiff is designed for readability and minimal size. It uses a prefix system for partial updates:
+
+- Full Replace: `{ "Settings": { "Theme": "Dark" } }`  
+(Overwrites the entire Settings object)
+
+- Partial Patch: `{ "^Settings": { "Theme": "Dark" } }`  
+(Only updates the Theme; keeps other Settings intact)
+
+Note: The ^ prefix tells the parser to perform a partial update rather than a total replacement.
+
+Backwards compatibility, you can start with only a few classes using partial patch and later extend to more classes, old serialized JSON is compatible with the updated code thanks to the prefix system.
 
 [Read more...](https://github.com/silentorbit/JsonDiff/blob/master/JSON-Format.txt)
 
-# Code Example
+# 🛠️ Installation
+Get up and running via NuGet:
 
-See examples in [Demo](https://github.com/silentorbit/JsonDiff/blob/master/Demo/Demo.Shared/Program.cs)
+```Bash
+dotnet add package SilentOrbit.JsonDiff
+```
 
-# Features
+Includes both 
+[`SilentOrbit.JsonDiff.Abstraction`](https://www.nuget.org/packages/SilentOrbit.JsonDiff.Abstraction/)
+[`SilentOrbit.JsonDiff.Generator`](https://www.nuget.org/packages/SilentOrbit.JsonDiff.Generator/)
 
-Assign attributes to control the source generation.
+## 📜 From Source
 
-## Class Attribute
+Explore
+[`Demo.NuGet`](https://github.com/silentorbit/JsonDiff/tree/master/Demo/Demo.NuGet)
+and
+[`Demo.Source`](https://github.com/silentorbit/JsonDiff/tree/master/Demo/Demo.Source)
+on GitHub.
 
-Assign this to every class that will be compared on a per property level.
-Classes missing this will be treated as "immutable", any change will be indicated by a complete copy.
+## 🏗️ Build Configurations
 
-- [[JsonDiffClass]](https://github.com/silentorbit/JsonDiff/blob/master/JsonDiff/JsonDiff.Abstractions/Attributes/JsonDiffClassAttribute.cs)
+To check generated code into Source Control (Git), we provide build targets in the Demo.Source.csproj:
 
-## Property Attributes
-
-- [[JsonDiffAlways]](https://github.com/silentorbit/JsonDiff/blob/master/JsonDiff/JsonDiff.Abstractions/Attributes/JsonDiffAlwaysAttribute.cs)
-- [[JsonDiffFullCloneAttribute]](https://github.com/silentorbit/JsonDiff/blob/master/JsonDiff/JsonDiff.Abstractions/Attributes/JsonDiffFullCloneAttribute.cs)
-- [[JsonDiffIgnoreAttribute]](https://github.com/silentorbit/JsonDiff/blob/master/JsonDiff/JsonDiff.Abstractions/Attributes/JsonDiffIgnoreAttribute.cs)
-- [[JsonDiffImmutableAttribute]](https://github.com/silentorbit/JsonDiff/blob/master/JsonDiff/JsonDiff.Abstractions/Attributes/JsonDiffImmutableAttribute.cs)
-
-# Installing
-
-Two options: NuGet package or from source.
-
-## NuGet
-
-Install NuGet package: [`SilentOrbit.JsonDiff`](https://www.nuget.org/packages/SilentOrbit.JsonDiff/)
-
-Sample: [`Demo.NuGet` on GitHub](https://github.com/silentorbit/JsonDiff/tree/master/Demo/Demo.NuGet)
-
-## Source
-
-Clone [`JsonDiff` on GitHub](https://github.com/silentorbit/JsonDiff/)
-
-Sample: [`Demo.Source` on GitHub](https://github.com/silentorbit/JsonDiff/tree/master/Demo/Demo.Source) (Same Repo)
-
-# Configurations
-
-Demo.csproj has 3 extra configurations.
-The purpose of these are to enable one time source generation.
-
-`Debug` and `Release` behaves as normal, using the source generator.
-
-`GenerateSource` Generates the source and saves it inside the project, allowing you to save the source code in git.  
-
-The saved source code is only used in `DebugGenerated` and `ReleaseGenerated`.  
-You may choose to copy the configuration from these into your project, allowing one time code generation.
+- Debug/Release: Standard background source generation.
+- GenerateSource: Runs the generator and saves the .cs files to your /Generated folder.
+- DebugGenerated: Builds using the saved files (Source Generator disabled).
 
 | Configuration          | Source Generation | Save to "Generated" | Build                |
 | ---------------------- | ----------------- | ------------------- | -------------------- |
@@ -91,4 +101,20 @@ You may choose to copy the configuration from these into your project, allowing 
 | GenerateSource (Debug) | Yes               | Yes                 | Newly generated      |
 | DebugGenerated         | No                | No                  | Previously generated |
 | ReleaseGenerated       | No                | No                  | Previously generated |
+
+
+
+# ⚙️ Advanced Control
+
+Fine-tune how your diffs are generated using property attributes:
+
+| Attribute | Effect |
+| --- | --- |
+| [[JsonDiffAlways]](https://github.com/silentorbit/JsonDiff/blob/master/JsonDiff/JsonDiff.Abstractions/Attributes/JsonDiffAlwaysAttribute.cs) | Always include this property in the diff, assume always changed. |
+| [[JsonDiffIgnore]](https://github.com/silentorbit/JsonDiff/blob/master/JsonDiff/JsonDiff.Abstractions/Attributes/JsonDiffIgnoreAttribute.cs) | Don't include this property in the diff. |
+| [[JsonDiffImmutable]](https://github.com/silentorbit/JsonDiff/blob/master/JsonDiff/JsonDiff.Abstractions/Attributes/JsonDiffImmutableAttribute.cs) | Treat the property as a single value, never attempt a partial patch. |
+| [[JsonDiffFull]](https://github.com/silentorbit/JsonDiff/blob/master/JsonDiff/JsonDiff.Abstractions/Attributes/JsonDiffFullAttribute.cs) | Force a deep copy of the value when a change is detected. |
+
+
+
 
