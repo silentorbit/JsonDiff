@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<RootNamespace>SilentOrbit.JsonDiff.Demo</RootNamespace>
+		<Configurations>Debug;Release;GenerateSource;DebugGenerated;ReleaseGenerated</Configurations>
+	</PropertyGroup>
+
+	<!-- Treat as Debug -->
+	<PropertyGroup Condition="'$(Configuration)'=='GenerateSource'">
+		<DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='DebugGenerated'">
+		<DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='ReleaseGenerated'">
+		<DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+	</PropertyGroup>
+
+	<Import Project="..\Demo.Shared\Demo.Shared.projitems" Label="Shared" />
+
+	<!--
+	Configurations:
+	- Debug: Generate, don't save
+	- Release: Generate, don't save
+	- GenerateSource(Debug): Generate, save
+	- DebugGenerated: Don't generate, build from saved
+	- ReleaseGenerated: Don't generate, build from saved
+	-->
+
+	<!-- GenerateSource: Save generated -->
+	<PropertyGroup Condition="'$(Configuration)' == 'GenerateSource'">
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+	</PropertyGroup>
+	
+	<!-- Debug/Release/GenerateSource: Generate and compile, ignore saved -->
+	<ItemGroup Condition="'$(Configuration)' != 'DebugGenerated' And '$(Configuration)' != 'ReleaseGenerated'">
+		<ProjectReference Include="..\..\JsonDiff\JsonDiff.Generator\JsonDiff.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<!-- Show but don't compile generated code -->
+		<Compile Remove="Generated/**/*.cs" />
+		<None Include="Generated/**/*.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\JsonDiff\JsonDiff.Abstractions\JsonDiff.Abstractions.csproj" />
+	</ItemGroup>
+
+	<!-- Delete Generated Folder before regenerating, clean up stale files -->
+	<Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(Configuration)' == 'GenerateSource'">
+		<RemoveDir Directories="$(CompilerGeneratedFilesOutputPath)" />
+	</Target>
+
+</Project>

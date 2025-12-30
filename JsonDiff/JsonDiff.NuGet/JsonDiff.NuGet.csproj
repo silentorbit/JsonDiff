@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>SilentOrbit.JsonDiff</RootNamespace>
+		<AssemblyName>JsonDiff</AssemblyName>
+	</PropertyGroup>
+
+	<!-- NuGet: SilentOrbit.JsonDiff -->
+	<PropertyGroup>
+		<PackageId>SilentOrbit.JsonDiff</PackageId>
+		<Version>0.1.5</Version>
+		<Authors>hultqvist</Authors>
+		<Company>SilentOrbit</Company>
+		<Title>JSON Diff</Title>
+		<PackageProjectUrl>https://github.com/silentorbit/JsonDiff</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/silentorbit/JsonDiff</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<Description>
+			Track and generates diff of custom classes.
+			Compatible with System.Text.Json for serialization.
+
+			This package contain only dependencies to
+			`SilentOrbit.JsonDiff.Abstractions` and `SilentOrbit.JsonDiff.Generator`
+		</Description>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="SilentOrbit.JsonDiff.Abstractions" Version="0.1.5" />
+		<PackageReference Include="SilentOrbit.JsonDiff.Generator" Version="0.1.5" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="../../README.md" Pack="true" PackagePath="." />
+	</ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)' != 'Release'">
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+</Project>

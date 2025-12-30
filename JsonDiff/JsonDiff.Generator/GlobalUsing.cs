@@ -1,0 +1,11 @@
+﻿global using SilentOrbit.JsonDiff.Attributes;
+global using SilentOrbit.JsonDiff.CodeTools;
+global using SilentOrbit.JsonDiff.Generator;
+global using SilentOrbit.JsonDiff.IncrementalGenerator;
+global using SilentOrbit.JsonDiff.Interfaces;
+global using SilentOrbit.JsonDiff.Tools;
+global using System;
+global using System.Collections.Generic;
+global using System.Diagnostics;
+global using System.Text;
+global using System.Text.Json.Serialization;
