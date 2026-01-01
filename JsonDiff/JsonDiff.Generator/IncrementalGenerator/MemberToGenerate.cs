@@ -1,6 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using SilentOrbit.JsonDiff.Generator;
-using System.Text.Json.Serialization;
 
 namespace SilentOrbit.JsonDiff.IncrementalGenerator;
 

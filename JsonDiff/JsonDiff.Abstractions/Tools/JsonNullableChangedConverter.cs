@@ -1,5 +1,4 @@
-﻿using SilentOrbit.JsonDiff.Interfaces;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace SilentOrbit.JsonDiff.Tools;

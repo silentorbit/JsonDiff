@@ -1,8 +1,6 @@
 ﻿//Disable nullable here to suppor both nullable and non nullable classes
 #nullable disable
 
-using SilentOrbit;
-
 namespace SilentOrbit.JsonDiff.Interfaces;
 
 /// <summary>

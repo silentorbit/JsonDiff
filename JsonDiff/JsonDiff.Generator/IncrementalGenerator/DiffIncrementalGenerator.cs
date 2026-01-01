@@ -1,9 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using SilentOrbit.JsonDiff.Generator;
-using System.Linq;
-using System.Threading;
 
 namespace SilentOrbit.JsonDiff.IncrementalGenerator;
 

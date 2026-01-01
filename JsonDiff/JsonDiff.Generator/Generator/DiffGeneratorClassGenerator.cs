@@ -1,6 +1,4 @@
-﻿using SilentOrbit.JsonDiff.IncrementalGenerator;
-
-namespace SilentOrbit.JsonDiff.Generator;
+﻿namespace SilentOrbit.JsonDiff.Generator;
 
 class DiffGeneratorClassGenerator(DiffToGenerate spec) : BaseGenerator(spec)
 {
