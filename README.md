@@ -24,7 +24,7 @@ public partial class UserProfile {
 ## Detect changes
 ```C#
 var profile = new UserProfile();
-var diff = original.CreateReferenceDiff();
+var diff = profile.CreateReferenceDiff();
 
 // Modify
 profile.Name = "Alice";
