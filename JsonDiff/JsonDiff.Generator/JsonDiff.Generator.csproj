@@ -7,6 +7,8 @@
 		<RootNamespace>SilentOrbit.JsonDiff</RootNamespace>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+		<!-- Fix issue with generator not finding JsonDiff.Abstractions -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
 	<ItemGroup>
