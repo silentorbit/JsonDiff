@@ -41,11 +41,13 @@ class DiffIncrementalGenerator : IIncrementalGenerator
         {
             try
             {
+                if (member.IsStatic)
+                    continue;
                 if (member is not IPropertySymbol namedMember)
                     continue;
                 if (MemberToGenerate.IsIgnore(namedMember))
                     continue;
-
+                
                 var memberAttributes = new MemberToGenerate(namedMember);
 
                 toGenerate.Members.Add(memberAttributes);
