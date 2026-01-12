@@ -133,7 +133,7 @@ class DiffClassGenerator(DiffToGenerate spec) : BaseGenerator(spec)
         w.Summary($"Apply changes to full instance");
         using var _ = w.Method("public", sourceClass, ApplyToMethod, $"{sourceClass}? from");
 
-        w.AppendLine($"var to = {JsonClone}(from) ?? new();");
+        w.AppendLine($"var to = {JsonClone}(from) ?? Activator.CreateInstance<{sourceClass}>();");
         foreach (var member in members)
         {
             if (member.IsDiffAlways)
